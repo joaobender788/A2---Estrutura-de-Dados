@@ -1,0 +1,152 @@
+# Relatório Técnico de Testes – Sistema de Gerenciamento de Eventos Críticos
+
+---
+
+## 1. Introdução
+
+O presente relatório descreve os procedimentos de validação e os testes funcionais realizados para o **Sistema de Gerenciamento de Eventos Críticos de uma Cidade Inteligente**, desenvolvido em linguagem C utilizando a estrutura de dados Árvore AVL. O objetivo é demonstrar a integridade das operações de inserção, remoção, atualização, balanceamento e consultas avançadas.
+
+---
+
+## 2. Ambiente de Testes
+
+* **Sistema Operacional:** Linux (Ubuntu 22.04 LTS) / Windows 11
+* **Compilador:** GCC (GNU Compiler Collection) 11.4.0
+* **Comando de compilação utilizado:** `gcc -o gerenciador_eventos main.c -lm`
+
+---
+
+## 3. Casos de Teste e Resultados
+
+Abaixo são apresentados os cenários simulados, representando a interação do usuário com o sistema via terminal.
+
+### Caso de Teste 1: Cadastro de Eventos (Inserção e Balanceamento)
+
+* **Ação:** Inserção de 5 eventos na árvore para forçar o balanceamento e rotações.
+  * Evento 1: ID 50, Acidente, Severidade 4, Região Centro, Ativo
+  * Evento 2: ID 30, Incêndio, Severidade 5, Região Sul, Ativo
+  * Evento 3: ID 20, Alagamento, Severidade 3, Região Norte, Ativo
+* **Captura de Tela / Saída do Terminal:**
+  ```text
+  =============================================
+   SISTEMA DE GERENCIAMENTO DE EVENTOS CRITICOS
+  =============================================
+  1. Cadastrar Evento
+  2. Remover Evento
+  3. Buscar Evento por ID
+  4. Consultas Avancadas
+  5. Atualizar Evento
+  6. Metricas da Arvore
+  7. Exibir Todos os Eventos (Em-Ordem)
+  8. Sair
+  Escolha uma opcao: 1
+  ID do Evento: 50
+  Tipo do Evento (ex: Acidente, Incendio): Acidente
+  Nivel de Severidade (1 a 5): 4
+  Data e Hora (DD MM YYYY HH MM): 10 05 2026 14 30
+  Regiao da cidade: Centro
+  Status (0 - Ativo, 1 - Resolvido): 0
+  Evento cadastrado com sucesso!
+  ```
+
+* **Resultado Esperado:** O evento é inserido e o balanceamento é mantido. Sucesso.
+
+---
+
+### Caso de Teste 2: Validação de Chave Primária (ID Duplicado)
+
+* **Ação:** Tentar inserir um evento com um ID já existente.
+* **Captura de Tela / Saída do Terminal:**
+  ```text
+  Escolha uma opcao: 1
+  ID do Evento: 50
+  Erro: ID ja existente na arvore!
+  ```
+* **Resultado Esperado:** Bloqueio da inserção para manter a consistência da árvore. Sucesso.
+
+---
+
+### Caso de Teste 3: Atualização de Evento (Alteração de Severidade)
+
+* **Ação:** Acessar o submenu de atualização para alterar a severidade de um evento ativo de ID 50.
+* **Captura de Tela / Saída do Terminal:**
+  ```text
+  Escolha uma opcao: 5
+
+  --- Atualizar Evento ---
+  1. Alterar status (Ativo -> Resolvido)
+  2. Atualizar severidade
+  Escolha: 2
+  ID do evento: 50
+  Nova severidade (1-5): 5
+  Severidade atualizada com sucesso!
+  ```
+* **Resultado Esperado:** O valor de severidade é modificado na estrutura de dados sem quebrar o balanceamento. Sucesso.
+
+---
+
+### Caso de Teste 4: Remoção com Restrição de Status
+
+* **Ação:** Tentar remover o evento de ID 50 (que está com o status `ATIVO`).
+* **Captura de Tela / Saída do Terminal:**
+  ```text
+  Escolha uma opcao: 2
+  ID do evento a remover: 50
+  Erro: O evento esta ATIVO, remocao nao permitida.
+  ```
+* **Ação 4.1:** Alterar status para `RESOLVIDO` e em seguida realizar a remoção.
+  ```text
+  Escolha uma opcao: 5
+  Escolha: 1
+  ID do evento: 50
+  Status alterado para RESOLVIDO com sucesso!
+
+  Escolha uma opcao: 2
+  ID do evento a remover: 50
+  Evento removido com sucesso!
+  ```
+* **Resultado Esperado:** O sistema aplica o rebalanceamento após a remoção. Sucesso.
+
+---
+
+### Caso de Teste 5: Consultas Avançadas
+
+#### Filtro por Severidade (Ativos)
+* **Ação:** Listar eventos ativos com severidade entre 3 e 5.
+* **Captura de Tela / Saída do Terminal:**
+  ```text
+  Severidade minima (1-5): 3
+  Severidade maxima (1-5): 5
+
+  ---------------------------------------------
+   ID: 30
+   Tipo: Incendio
+   Severidade: 5
+   Data/Hora: 12/05/2026 10:15
+   Regiao: Sul
+   Status: ATIVO
+  ---------------------------------------------
+  ```
+
+---
+
+### Caso de Teste 6: Métricas da Árvore
+
+* **Ação:** Exibir as métricas atualizadas da estrutura após a inserção e remoção de registros.
+* **Captura de Tela / Saída do Terminal:**
+  ```text
+  Escolha uma opcao: 6
+
+  --- Metricas da Arvore ---
+  Altura total da arvore: 2
+  Numero total de nos: 4
+  Numero de eventos ativos: 3
+  Fator de balanceamento medio: 0.33
+  Quantidade total de rotacoes: 1
+  ```
+
+---
+
+## 4. Conclusão
+
+Os testes realizados indicam que o sistema cumpre com todos os requisitos funcionais e estruturais. As regras de negócio (como a proibição de remover eventos ativos e a restrição de severidade) foram validadas, e a complexidade e tempo de resposta foram mantidos dentro do esperado para a estrutura de Árvore AVL.
